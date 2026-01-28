@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Work Orders — Original Style</title>
+<title>Work Orders — Approach‑Style Viewer v4 (mobile fullscreen + safe‑area)</title>
 <style>
   :root{--bg:#0b0d12;--panel:#0f1423;--card:#121726;--muted:#9db0c9;--text:#e8f0ff;--accent:#4da3ff;--border:#22314d}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
@@ -11,148 +11,177 @@
   header{padding:12px 16px;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:0;z-index:10}
   h1{margin:0;font-size:18px}
   .searchbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  input[type="search"]{flex:1;min-width:200px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0b1322;color:var(--text);font-size:16px}
-  
-  .main{display:flex;flex:1;overflow:hidden}
-  .list-pane{width:350px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--bg)}
-  .list-content{flex:1;overflow-y:auto;padding:8px}
-  .detail-pane{flex:1;overflow-y:auto;padding:20px;background:#06080a}
+  input[type="search"],input[type="text"]{flex:1;min-width:200px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0b1322;color:var(--text)}
+  .meta{font-size:12px;color:var(--muted);margin-top:6px}
 
-  /* List Items */
-  .item{padding:12px;border-radius:10px;cursor:pointer;margin-bottom:6px;border:1px solid transparent;transition:all 0.2s}
-  .item:hover{background:var(--panel)}
-  .item.active{background:var(--accent);color:#fff}
-  .item .addr{font-weight:600;font-size:15px}
-  .item .sub{font-size:13px;opacity:0.8;margin-top:2px}
+  main{display:flex;flex:1;min-height:0}
+  .list{width:420px;max-width:100%;border-right:1px solid var(--border);overflow:auto}
+  .row{padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer}
+  .row:hover{background:#0e1626}
+  .row.active{background:#11213a;border-left:3px solid var(--accent)}
+  .addrOnly{color:var(--text);font-weight:700}
+  .subaddr{color:var(--muted);font-size:12px;margin-top:2px}
 
-  /* Cards & Details */
-  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:800px;margin:0 auto;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-  .section{margin-bottom:24px}
-  .section h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin:0 0 12px 0;border-bottom:1px solid var(--border);padding-bottom:8px}
-  
-  .parts-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:8px}
-  .part-item{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px;display:flex;justify-content:space-between;font-size:13px}
-  .part-val{font-weight:bold;color:var(--accent)}
+  .detail{flex:1;overflow:auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .bigaddr{font-size:22px;font-weight:800;margin-bottom:8px}
+  .infoRow{font-size:15px;margin-bottom:8px;color:#cfe1ff}
+  .infoRow .tag{margin-right:14px}
+  .tag strong{font-weight:700}
+  .locRow{font-size:14px;color:#bcd6ff}
 
-  /* Mobile Overrides */
-  @media(max-width:768px){
-    .list-pane{width:100%; position:absolute; inset:0; z-index:5}
-    .detail-pane{width:100%; position:absolute; inset:0; z-index:1}
-    .app.mobile-detail .list-pane{display:none}
-    .app.mobile-detail .detail-pane{z-index:10; display:block}
-    
-    /* Re-enabling the parts section on mobile */
+  .section{margin-top:14px}
+  .section h3{margin:0 0 8px 0;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+
+  .problem{background:#1a243d;border:1px solid var(--border);border-radius:10px;padding:12px}
+  .problem .label{color:#ffd28c;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .problem .value{margin-top:6px;white-space:pre-wrap}
+
+  .notes{background:#171f33;border:1px solid var(--border);border-radius:10px;padding:12px}
+  .notes .label{color:#a7ffcf;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .notes .value{margin-top:6px;white-space:pre-wrap}
+  .notes .line{margin-top:8px}
+  .notes .line .label{color:var(--muted);font-size:12px}
+  .notes .line .value{margin-top:4px}
+
+  .parts .group{margin-top:10px}
+  .parts .group h4{margin:0 0 6px 0;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#b2c8ff}
+  .parts .list{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+  .parts .item{background:#0f1629;border:1px solid var(--border);border-radius:8px;padding:8px}
+  .parts .item .label{color:var(--muted);font-size:12px}
+  .parts .item .value{margin-top:4px}
+
+  @media (max-width: 900px){
+    .list{width:100%;max-width:none}
+    main{flex-direction:column}
+    .app.mobile-detail .list{display:none}
+    /* Ensure parts remain visible on mobile */
     .section.parts { display: block !important; }
   }
 
-  .back-btn{display:none; margin-bottom:15px; color:var(--accent); background:none; border:none; font-size:16px; font-weight:bold; cursor:pointer}
-  @media(max-width:768px){ .back-btn{display:block} }
+  .backbar{display:none;margin:0 0 10px 0}
+  .app.mobile-detail .backbar{display:block}
+  .backbtn{display:inline-flex;align-items:center;gap:8px;background:#0e1629;color:#eaf2ff;border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer}
 </style>
 </head>
 <body>
-
 <div class="app" id="app">
-  <header>
-    <h1>Work Order Archive</h1>
+  <header id="hdr">
+    <h1>Work Orders — Approach‑Style Viewer</h1>
     <div class="searchbar">
-      <input type="search" id="q" placeholder="Search by address or WO#...">
+      <input id="q" type="search" placeholder="Phrase search..." />
+      <input id="adv" type="text" placeholder="Optional fielded terms..." />
     </div>
+    <div class="meta"><span id="meta">Loading…</span> <span id="msg" style="color:#ff9e9e"></span></div>
   </header>
 
-  <div class="main">
-    <div class="list-pane">
-      <div id="meta" style="padding:10px; font-size:12px; color:var(--muted)"></div>
-      <div id="list" class="list-content"></div>
+  <main>
+    <div class="list" id="list"></div>
+    <div class="detail" id="detailPane">
+      <div class="backbar"><button class="backbtn" id="backBtn">◀ Back to results</button></div>
+      <div class="card" id="detail">Select a record…</div>
     </div>
-    <div class="detail-pane" id="detailPane">
-      <button class="back-btn" onclick="goBack()">← Back to List</button>
-      <div id="detail"></div>
-    </div>
-  </div>
+  </main>
 </div>
 
 <script>
-  let records = [];
-  const listEl = document.getElementById('list');
-  const detailEl = document.getElementById('detail');
-  const app = document.getElementById('app');
+(async function(){
+  const $ = (id)=>document.getElementById(id);
+  const app=$('app'), hdr=$('hdr'), meta=$('meta'), msg=$('msg'), listEl=$('list'), detailEl=$('detail'), q=$('q'), adv=$('adv'), detailPane=$('detailPane'), backBtn=$('backBtn');
 
-  fetch('data.json').then(r => r.json()).then(data => {
-    records = data.records || [];
-    render();
-  });
+  const esc = (s)=> (s||'').toString().replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
+  const norm = (s)=> (s||'').toString().toLowerCase();
+  const squeeze = (s)=> norm(s).replace(/\s+/g,' ').trim();
+  const isMobile = ()=> window.matchMedia('(max-width: 900px)').matches;
 
-  function render() {
-    const term = document.getElementById('q').value.toLowerCase();
-    const filtered = records.filter(r => 
-      (r.ADDRESS && r.ADDRESS.toLowerCase().includes(term)) || 
-      (r['WORK_ORDER NO'] && r['WORK_ORDER NO'].toString().includes(term))
-    );
+  let columns=[], records=[], listFields=[], addressFields=[], payload;
+  try{
+    const r = await fetch('data.json', {cache:'no-store'});
+    payload = await r.json();
+    columns = payload.columns||[];
+    records = payload.records||[];
+    listFields = payload.listFields||[];
+    addressFields = payload.addressFields||[];
+    meta.textContent = `${records.length} records`;
+  }catch(e){ meta.textContent='0 records'; return; }
 
-    document.getElementById('meta').textContent = `${filtered.length} Records Found`;
-    
-    listEl.innerHTML = filtered.map((r, i) => `
-      <div class="item" onclick="showDetail(${records.indexOf(r)})">
-        <div class="addr">${r.ADDRESS || 'No Address'}</div>
-        <div class="sub">WO #${r['WORK_ORDER NO']} • ${r.DATE ? r.DATE.split(' ')[0] : ''}</div>
-      </div>
-    `).join('');
+  // Field definitions
+  const getCol = (name)=> columns.find(c=>c.toLowerCase()===name.toLowerCase());
+  const colAddress = getCol('ADDRESS'), colWO = getCol('WORK_ORDER NO'), colDate = getCol('DATE'), colName = getCol('NAME');
+  const colHouse = getCol('HOUSE NO'), colStreet = getCol('STREET NAME'), colApprox = getCol('APPROX ADDRESS');
+  const colProblem = getCol('PROBLEM'), colNotes = getCol('NOTES'), colML = getCol('ML MEASUREMENTS');
+
+  const partLabels = {
+    A:{'A1':'1\" HD Coupling','A2':'1\" Corp','A3':'1\" Dresser','A4':'1\" M Valve','A5':'1\" F Valve','A6':'1\" M End','A7':'1\" F End','A8':'1\" Pipe'},
+    E:{'E1':'4\" Brass Saddle','E2':'4\" Pipe','E3':'6\" Brass Saddle','E4':'6\" Pipe','E5':'8\" Brass Saddle','E6':'8\" Pipe','E7':'1\" AirVac','E8':'2\" AirVac'}
+  };
+  ['B','C','D'].forEach(g=>{ partLabels[g]={}; const sz=g==='B'?'1.25':g==='C'?'1.5':'2'; ['HD Coupling','Corp','Dresser','M Valve','F Valve','M End','F End','Pipe'].forEach((l,i)=>{partLabels[g][g+(i+1)]=`${sz}\" ${l}`})});
+
+  function displayAddress(rec){ return rec[colAddress] || ((rec[colHouse]||'') + ' ' + (rec[colStreet]||'')).trim(); }
+
+  function matches(rec){
+    const phrase = squeeze(q.value);
+    if(!phrase) return true;
+    const hay = squeeze([displayAddress(rec), rec[colWO]||''].join(' '));
+    return hay.includes(phrase);
   }
 
-  function showDetail(idx) {
-    const r = records[idx];
-    app.classList.add('mobile-detail');
+  let filtered = records, activeIndex = -1;
+
+  function renderList(){
+    listEl.innerHTML='';
+    filtered.forEach((r,i)=>{
+      const row=document.createElement('div');
+      row.className='row'+(i===activeIndex?' active':'');
+      row.innerHTML=`<div class=addrOnly>${esc(displayAddress(r))}</div><div class=subaddr>WO #${r[colWO]||'N/A'}</div>`;
+      row.onclick=()=>{
+        activeIndex=i; renderDetail(r); renderList();
+        if(isMobile()){
+          app.classList.add('mobile-detail');
+          detailPane.style.position='fixed'; detailPane.style.top=hdr.offsetHeight+'px';
+          detailPane.scrollTop = 0;
+        }
+      };
+      listEl.appendChild(row);
+    });
+  }
+
+  function renderDetail(rec){
+    const bigAddr = esc(displayAddress(rec));
+    const woStr = rec[colWO] ? `<span class="tag"><strong>WO:</strong> ${esc(rec[colWO])}</span>` : '';
     
-    // Function to check if a value is valid (Not empty, 0, or N/A)
-    const isVal = v => v && v !== "0" && v !== "" && v !== "N/A" && v !== "NaT";
+    // Helper to hide N/A or empty values
+    const isVal = (v) => v && v !== "0" && v !== "" && v !== "N/A" && v !== "NaT";
 
-    // Build Parts Groups
-    const buildParts = (prefix, label) => {
-      let items = '';
-      for(let i=1; i<=8; i++) {
-        let v = r[prefix + i];
-        if(isVal(v)) items += `<div class="part-item"><span>Part ${prefix}${i}</span><span class="part-val">${v}</span></div>`;
+    function buildPartGroup(letter){
+      const defs = partLabels[letter] || {};
+      const items=[];
+      for(const key of Object.keys(defs)){
+        const col = getCol(key);
+        if(col && isVal(rec[col])) items.push({label:defs[key], value:rec[col]});
       }
-      return items ? `<div class="section"><h3>${label}</h3><div class="parts-grid">${items}</div></div>` : '';
-    };
-
-    // Build Misc
-    let misc = '';
-    for(let i=1; i<=9; i++) {
-      let qty = r['MISC'+i];
-      let name = r['MISC'+i+'A'];
-      if(isVal(qty) || isVal(name)) {
-        misc += `<div class="part-item"><span>${name || 'Misc'}</span><span class="part-val">${qty || ''}</span></div>`;
-      }
+      return items;
     }
-    const miscBlock = misc ? `<div class="section"><h3>Miscellaneous</h3><div class="parts-grid">${misc}</div></div>` : '';
 
-    detailEl.innerHTML = `
-      <div class="card">
-        <h2 style="margin:0 0 10px 0; color:var(--accent)">${r.ADDRESS}</h2>
-        <div style="margin-bottom:20px; font-size:14px; color:var(--muted)">
-          ${isVal(r.DATE) ? 'Date: ' + r.DATE.split(' ')[0] : ''} 
-          ${isVal(r['WORK_ORDER NO']) ? ' | WO: #' + r['WORK_ORDER NO'] : ''}
-        </div>
+    const groupsHtml = ['A','B','C','D','E'].map(l=>{
+      const items = buildPartGroup(l);
+      if(!items.length) return '';
+      return `<div class="group"><h4>${l} Group</h4><div class=list>${items.map(x=>`<div class=item><div class=label>${esc(x.label)}</div><div class=value>${esc(x.value)}</div></div>`).join('')}</div></div>`;
+    }).join('');
 
-        ${isVal(r.PROBLEM) ? `<div class="section"><h3>Problem</h3><p>${r.PROBLEM}</p></div>` : ''}
-        ${isVal(r.NOTES) ? `<div class="section"><h3>Notes</h3><p>${r.NOTES}</p></div>` : ''}
-        
-        <div class="section parts">
-          ${buildParts('A', '1" Parts')}
-          ${buildParts('B', '1.25" Parts')}
-          ${buildParts('C', '1.5" Parts')}
-          ${buildParts('D', '2" / 2.5" Parts')}
-          ${buildParts('E', 'Large Parts')}
-          ${miscBlock}
-        </div>
-      </div>
-    `;
-    document.getElementById('detailPane').scrollTop = 0;
+    detailEl.innerHTML = `<div class=card>
+      <div class=bigaddr>${bigAddr}</div>
+      <div class=infoRow>${woStr}</div>
+      ${isVal(rec[colProblem]) ? `<div class="section"><div class=problem><div class=label>Problem</div><div class=value>${esc(rec[colProblem])}</div></div></div>` : ''}
+      ${groupsHtml ? `<div class="section parts"><h3>Materials</h3>${groupsHtml}</div>` : ''}
+    </div>`;
   }
 
-  function goBack() { app.classList.remove('mobile-detail'); }
-  document.getElementById('q').addEventListener('input', render);
+  backBtn.onclick = () => { app.classList.remove('mobile-detail'); detailPane.removeAttribute('style'); };
+  q.oninput = () => { filtered = records.filter(matches); renderAll(); };
+  function renderAll(){ renderList(); if(filtered.length) renderDetail(filtered[0]); }
+  renderAll();
+})();
 </script>
 </body>
 </html>
