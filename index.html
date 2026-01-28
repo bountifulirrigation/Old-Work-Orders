@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Work Order Viewer - Mobile Fixed</title>
+<title>Work Order Viewer</title>
 <style>
   :root{--bg:#0b0d12;--panel:#0f1423;--card:#121726;--muted:#9db0c9;--text:#e8f0ff;--accent:#4da3ff;--border:#22314d}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;overflow:hidden}
@@ -13,60 +13,60 @@
   
   .main-container{display:flex;flex:1;overflow:hidden;position:relative}
   
-  /* Desktop List View */
+  /* List Pane */
   .list-pane{width:350px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--bg);transition: transform 0.3s ease}
   .list-content{flex:1;overflow-y:auto;padding:8px}
   
-  /* Detail View */
-  .detail-pane{flex:1;overflow-y:auto;padding:20px;background:var(--bg);transition: transform 0.3s ease}
+  /* Detail Pane - Fixed Scrolling */
+  .detail-pane{flex:1;overflow-y:auto;padding:20px;background:var(--bg);transition: transform 0.3s ease; -webkit-overflow-scrolling: touch;}
 
-  /* Mobile Logic */
+  /* Mobile Layout */
   @media (max-width: 768px) {
     .list-pane { width: 100%; position: absolute; height: 100%; z-index: 2; }
     .detail-pane { width: 100%; position: absolute; height: 100%; z-index: 1; padding: 15px; }
-    
-    /* When a detail is active on mobile, hide the list */
     .app.mobile-view-detail .list-pane { transform: translateX(-100%); }
     .app.mobile-view-detail .detail-pane { z-index: 3; }
   }
 
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
-  .item{padding:12px;border-radius:8px;cursor:pointer;margin-bottom:4px;border:1px solid transparent; background: rgba(255,255,255,0.02)}
-  .item:active{background:var(--panel)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:60px;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+  .item{padding:12px;border-radius:8px;cursor:pointer;margin-bottom:6px;border:1px solid var(--border); background: rgba(255,255,255,0.02)}
   
-  /* Only show back button on mobile */
   .back-btn { display: none; margin-bottom: 15px; padding: 12px; background: var(--panel); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: left; }
   @media (max-width: 768px) { .back-btn { display: block; } }
 
-  .section-title { color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 8px 0; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  .section-title { color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px 0; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
   .grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
   @media (max-width: 480px) { .grid-row { grid-template-columns: 1fr; } }
   
-  .val-box { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px solid var(--border); }
+  .val-box { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 8px; }
   .label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 2px; }
   .value { font-size: 15px; font-weight: 500; }
   
-  input[type="search"] { -webkit-appearance: none; width:100%; margin-top:10px; padding:12px; border-radius:8px; border:1px solid var(--border); background:#000; color:#fff; font-size: 16px; }
+  input[type="search"] { width:100%; margin-top:10px; padding:12px; border-radius:8px; border:1px solid var(--border); background:#000; color:#fff; font-size: 16px; }
+  
+  /* Materials Table Styling */
+  .parts-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .parts-row:last-child { border-bottom: none; }
 </style>
 </head>
 <body>
 
 <div class="app" id="app">
   <header>
-    <h1 style="font-size: 1.2rem;">Work Order System</h1>
-    <input type="search" id="q" placeholder="Search address or WO#...">
+    <h1 style="font-size: 1.1rem; margin:0">Work Order Viewer</h1>
+    <input type="search" id="q" placeholder="Search address, name, or WO#...">
   </header>
 
   <div class="main-container">
     <div class="list-pane">
-      <div id="meta" style="padding:10px; font-size:12px; color:var(--muted)">Loading records...</div>
+      <div id="meta" style="padding:10px; font-size:11px; color:var(--muted)">Loading...</div>
       <div id="list" class="list-content"></div>
     </div>
     
     <div class="detail-pane" id="detailPane">
       <button class="back-btn" onclick="closeDetail()">← Back to List</button>
       <div id="detail">
-        <div style="text-align:center; padding-top:50px; color:var(--muted)">Select a work order from the list.</div>
+        <div style="text-align:center; padding-top:50px; color:var(--muted)">Select a work order.</div>
       </div>
     </div>
   </div>
@@ -83,26 +83,16 @@
   fetch('data.json')
     .then(r => r.json())
     .then(data => {
-      // Use the 'records' array from your specific JSON structure
       records = data.records || [];
       renderList(records);
       meta.textContent = `${records.length} total work orders`;
-    })
-    .catch(err => {
-      meta.textContent = "Error loading data.json";
-      console.error(err);
     });
 
   function renderList(items) {
-    if(items.length === 0) {
-      listEl.innerHTML = '<div style="padding:20px; color:var(--muted)">No results found.</div>';
-      return;
-    }
     listEl.innerHTML = items.map((r, i) => `
       <div class="item" onclick="showDetail(${i})">
         <div style="font-weight:bold; color:var(--accent)">${r.ADDRESS || 'No Address'}</div>
-        <div style="font-size:13px; margin-top:4px;">${r.PROBLEM ? r.PROBLEM.substring(0, 40) + '...' : 'No Description'}</div>
-        <div style="font-size:11px; color:var(--muted); margin-top:8px;">WO #${r['WORK_ORDER NO'] || 'N/A'} • ${r.DATE || ''}</div>
+        <div style="font-size:11px; color:var(--muted); margin-top:5px;">WO #${r['WORK_ORDER NO'] || 'N/A'} • ${r.DATE ? r.DATE.split(' ')[0] : ''}</div>
       </div>
     `).join('');
   }
@@ -110,32 +100,71 @@
   function showDetail(index) {
     const r = records[index];
     app.classList.add('mobile-view-detail');
-    
-    // Auto-scroll details to top
     document.getElementById('detailPane').scrollTop = 0;
+
+    // Helper to only show non-empty fields
+    const getField = (label, val) => {
+      if (!val || val === "NaT" || val === "N/A") return '';
+      return `<div class="val-box"><span class="label">${label}</span><span class="value">${val}</span></div>`;
+    };
+
+    // Logic to gather ALL parts (A1-E8 and MISC)
+    let partsHtml = '';
+    const partGroups = [
+      {prefix: 'A', label: '1" Parts'},
+      {prefix: 'B', label: '1.25" Parts'},
+      {prefix: 'C', label: '1.5" Parts'},
+      {prefix: 'D', label: '2" / 2.5" Parts'},
+      {prefix: 'E', label: 'Large Parts'}
+    ];
+
+    partGroups.forEach(group => {
+      let groupContent = '';
+      for(let i=1; i<=8; i++){
+        let val = r[group.prefix + i];
+        if(val && val !== "0" && val !== "") {
+          groupContent += `<div class="parts-row"><span>Part ${group.prefix}${i}</span> <span>${val}</span></div>`;
+        }
+      }
+      if(groupContent) {
+        partsHtml += `<div class="section-title">${group.label}</div><div class="val-box">${groupContent}</div>`;
+      }
+    });
+
+    // Add MISC parts
+    let miscContent = '';
+    for(let i=1; i<=9; i++){
+      let qty = r['MISC' + i];
+      let desc = r['MISC' + i + 'A'];
+      if(qty || desc) {
+        miscContent += `<div class="parts-row"><span>${desc || 'Misc'}</span> <span>${qty || ''}</span></div>`;
+      }
+    }
+    if(miscContent) {
+      partsHtml += `<div class="section-title">Miscellaneous Materials</div><div class="val-box">${miscContent}</div>`;
+    }
 
     detailEl.innerHTML = `
       <div class="card">
-        <h2 style="margin-top:0; color:var(--accent); line-height:1.2">${r.ADDRESS || 'Untitled'}</h2>
-        <div class="grid-row">
-          <div class="val-box"><span class="label">DATE</span><span class="value">${r.DATE || 'N/A'}</span></div>
-          <div class="val-box"><span class="label">WORK ORDER</span><span class="value">#${r['WORK_ORDER NO'] || 'N/A'}</span></div>
-        </div>
+        <h2 style="margin-top:0; color:var(--accent); line-height:1.2">${r.ADDRESS || 'No Address'}</h2>
         
-        <div class="section-title">Client Information</div>
-        <div class="val-box"><span class="label">NAME</span><span class="value">${r.NAME || 'N/A'}</span></div>
-
-        <div class="section-title">Issue Description</div>
-        <div class="val-box" style="line-height:1.5">${r.PROBLEM || 'No details provided.'}</div>
-
-        <div class="section-title">Measurements & Location</div>
         <div class="grid-row">
-            <div class="val-box"><span class="label">MEASUREMENTS</span><span class="value">${r['ML MEASUREMENTS'] || 'N/A'}</span></div>
-            <div class="val-box"><span class="label">HOLE SIZE</span><span class="value">${r['HOLE SIZE'] || 'N/A'}</span></div>
+          ${getField('DATE', r.DATE ? r.DATE.split(' ')[0] : '')}
+          ${getField('WORK ORDER', r['WORK_ORDER NO'])}
         </div>
+
+        ${getField('NAME', r.NAME)}
         
-        <div class="section-title">Job Notes</div>
-        <div class="val-box" style="font-style:italic; color:var(--muted)">${r.NOTES || 'No notes added.'}</div>
+        ${r.PROBLEM ? `<div class="section-title">Problem</div><div class="val-box">${r.PROBLEM}</div>` : ''}
+        
+        <div class="grid-row">
+            ${getField('MEASUREMENTS', r['ML MEASUREMENTS'])}
+            ${getField('HOLE SIZE', r['HOLE SIZE'])}
+        </div>
+
+        ${partsHtml}
+
+        ${r.NOTES ? `<div class="section-title">Notes</div><div class="val-box" style="font-size:14px; color:var(--muted)">${r.NOTES}</div>` : ''}
       </div>
     `;
   }
@@ -152,7 +181,7 @@
       (r.NAME && r.NAME.toLowerCase().includes(term))
     );
     renderList(filtered);
-    meta.textContent = `${filtered.length} matches found`;
+    meta.textContent = `${filtered.length} matches`;
   });
 </script>
 
