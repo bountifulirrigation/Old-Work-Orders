@@ -10,188 +10,101 @@
 
 <style>
   :root{
-    --bg:#0b0d12;
-    --panel:#0f1423;
-    --card:#121726;
-    --muted:#9db0c9;
-    --text:#e8f0ff;
-    --accent:#4da3ff;
-    --border:#22314d
+    --bg:#0b0d12;--panel:#0f1423;--card:#121726;
+    --muted:#9db0c9;--text:#e8f0ff;
+    --accent:#4da3ff;--border:#22314d
   }
 
   html,body{
-    margin:0;
-    height:100%;
+    margin:0;height:100%;
     background:var(--bg);
     color:var(--text);
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
   }
 
-  /* ✅ prevent horizontal clipping on mobile */
-  body{
-    overflow-x:hidden;
-  }
+  body{overflow-x:hidden}
 
-  .app{
-    display:flex;
-    flex-direction:column;
-    height:100%;
-    max-width:100%;
-  }
+  .app{display:flex;flex-direction:column;height:100%}
 
   header{
-    padding:12px 16px;
-    border-bottom:1px solid var(--border);
-    background:var(--panel);
-    position:sticky;
-    top:0;
-    z-index:10;
+    padding:12px 16px;border-bottom:1px solid var(--border);
+    background:var(--panel);position:sticky;top:0;z-index:10
   }
 
-  h1{
-    margin:0;
-    font-size:18px;
-  }
+  h1{margin:0;font-size:18px}
 
-  .searchbar{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin-top:8px;
-  }
+  .searchbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 
   input[type="search"],input[type="text"]{
-    flex:1;
-    min-width:200px;
-    padding:10px 12px;
-    border-radius:8px;
-    border:1px solid var(--border);
-    background:#0b1322;
-    color:var(--text);
+    flex:1;min-width:200px;padding:10px 12px;
+    border-radius:8px;border:1px solid var(--border);
+    background:#0b1322;color:var(--text)
   }
 
-  .meta{
-    font-size:12px;
-    color:var(--muted);
-    margin-top:6px;
-  }
+  .meta{font-size:12px;color:var(--muted);margin-top:6px}
 
-  main{
-    display:flex;
-    flex:1;
-    min-height:0;
-    max-width:100%;
-  }
+  main{display:flex;flex:1;min-height:0}
 
   .list{
-    width:420px;
-    max-width:100%;
-    border-right:1px solid var(--border);
-    overflow:auto;
+    width:420px;max-width:100%;
+    border-right:1px solid var(--border);overflow:auto
   }
 
-  .row{
-    padding:10px 14px;
-    border-bottom:1px solid var(--border);
-    cursor:pointer;
-  }
-
+  .row{padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer}
   .row:hover{background:#0e1626}
-  .row.active{
-    background:#11213a;
-    border-left:3px solid var(--accent);
-  }
+  .row.active{background:#11213a;border-left:3px solid var(--accent)}
 
-  .addrOnly{
-    color:var(--text);
-    font-weight:700;
-  }
+  .addrOnly{font-weight:700}
+  .subaddr{color:var(--muted);font-size:12px;margin-top:2px}
 
-  .subaddr{
-    color:var(--muted);
-    font-size:12px;
-    margin-top:2px;
-  }
-
-  .detail{
-    flex:1;
-    overflow:auto;
-    padding:16px;
-    max-width:100%;
-  }
-
+  .detail{flex:1;overflow:auto;padding:16px}
   .card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:16px;
-    max-width:100%;
+    background:var(--card);border:1px solid var(--border);
+    border-radius:12px;padding:16px;max-width:100%
   }
 
-  .bigaddr{
-    font-size:22px;
-    font-weight:800;
-    margin-bottom:8px;
-    word-wrap:break-word;
-  }
-
-  .infoRow{
-    font-size:15px;
-    margin-bottom:8px;
-    color:#cfe1ff;
-    flex-wrap:wrap;
-  }
-
+  .bigaddr{font-size:22px;font-weight:800;margin-bottom:8px;word-break:break-word}
+  .infoRow{font-size:15px;margin-bottom:8px;color:#cfe1ff;flex-wrap:wrap}
   .tag strong{font-weight:700}
   .locRow{font-size:14px;color:#bcd6ff}
 
-  .section{
-    margin-top:14px;
-    max-width:100%;
-  }
-
+  .section{margin-top:14px}
   .section h3{
-    margin:0 0 8px 0;
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:.6px;
-    color:var(--muted);
+    margin:0 0 8px 0;font-size:12px;
+    text-transform:uppercase;letter-spacing:.6px;color:var(--muted)
   }
 
   .problem,.notes{
-    background:#1a243d;
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:12px;
-    max-width:100%;
+    background:#1a243d;border:1px solid var(--border);
+    border-radius:10px;padding:12px
   }
 
-  .problem .value,
-  .notes .value{
-    white-space:pre-wrap;
-    word-break:break-word;
+  .problem .value,.notes .value{
+    margin-top:6px;white-space:pre-wrap;word-break:break-word
   }
 
   .notes .line{margin-top:8px}
   .notes .line .label{color:var(--muted);font-size:12px}
 
-  /* ✅ PARTS GRID FIX — THIS WAS THE MAIN MOBILE ISSUE */
+  .parts .group{margin-top:10px}
+  .parts .group h4{
+    margin:0 0 6px 0;font-size:12px;
+    text-transform:uppercase;letter-spacing:.5px;color:#b2c8ff
+  }
+
+  /* ✅ MOBILE FIX: parts grid no longer overflows */
   .parts .list{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:8px;
-    max-width:100%;
+    gap:8px
   }
 
   .parts .item{
-    background:#0f1629;
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:8px;
-    max-width:100%;
+    background:#0f1629;border:1px solid var(--border);
+    border-radius:8px;padding:8px
   }
 
-  /* Mobile behavior (unchanged logic, just safe widths) */
+  /* Mobile fullscreen behavior (unchanged) */
   @media (max-width:900px){
     main{flex-direction:column}
     .list{width:100%}
@@ -202,15 +115,10 @@
   .app.mobile-detail .backbar{display:block}
 
   .backbtn{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    background:#0e1629;
-    color:#eaf2ff;
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:8px 12px;
-    cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    background:#0e1629;color:#eaf2ff;
+    border:1px solid var(--border);border-radius:8px;
+    padding:8px 12px;cursor:pointer
   }
 </style>
 </head>
@@ -242,9 +150,104 @@
   </main>
 </div>
 
-<!-- 🔹 JS IS UNCHANGED 🔹 -->
 <script>
-/* your existing JS stays exactly as-is */
+(function(){
+  window.addEventListener('error', function(e){
+    var el = document.getElementById('msg');
+    if(el) el.textContent = 'Runtime error: ' + (e.message||e.error||'unknown');
+  });
+})();
+</script>
+
+<script>
+(async function(){
+  const app = document.getElementById('app');
+  const listEl = document.getElementById('list');
+  const detailEl = document.getElementById('detail');
+  const detailPane = document.getElementById('detailPane');
+  const backBtn = document.getElementById('backBtn');
+  const hdr = document.getElementById('hdr');
+  const q = document.getElementById('q');
+  const adv = document.getElementById('adv');
+  const meta = document.getElementById('meta');
+  const msg = document.getElementById('msg');
+
+  const esc = s => String(s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+  const norm = s => String(s||'').toLowerCase();
+  const squeeze = s => norm(s).replace(/\s+/g,' ').trim();
+  const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+
+  let columns=[], records=[], listFields=[], addressFields=[];
+
+  try{
+    const r = await fetch('data.json',{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const payload = await r.json();
+    columns = payload.columns||[];
+    records = payload.records||[];
+    listFields = payload.listFields||[];
+    addressFields = payload.addressFields||[];
+    meta.textContent = `${records.length} records | ${columns.length} fields`;
+  }catch(e){
+    meta.textContent='0 records';
+    msg.textContent='Failed to load data.json — '+e.message;
+    return;
+  }
+
+  const getCol = n => columns.find(c=>c.toLowerCase()===n.toLowerCase());
+  const colWO = getCol('WORK_ORDER NO');
+  const colDate = getCol('DATE');
+  const colName = getCol('NAME');
+  const colHouse = getCol('HOUSE NO');
+  const colStreet = getCol('STREET NAME');
+  const colProblem = getCol('PROBLEM');
+  const colNotes = getCol('NOTES');
+
+  function displayAddress(r){
+    return (colHouse?r[colHouse]:'')+' '+(colStreet?r[colStreet]:'');
+  }
+
+  let filtered=records, activeIndex=-1;
+
+  function renderList(){
+    listEl.innerHTML='';
+    filtered.forEach((r,i)=>{
+      const row=document.createElement('div');
+      row.className='row'+(i===activeIndex?' active':'');
+      row.innerHTML=`<div class=addrOnly>${esc(displayAddress(r))}</div>`;
+      row.onclick=()=>{
+        activeIndex=i;renderDetail(r);renderList();
+        if(isMobile()){
+          app.classList.add('mobile-detail');
+          Object.assign(detailPane.style,{
+            position:'fixed',top:(hdr.offsetHeight||0)+'px',
+            left:0,right:0,bottom:0,overflowY:'auto'
+          });
+        }
+      };
+      listEl.appendChild(row);
+    });
+  }
+
+  function renderDetail(r){
+    detailEl.innerHTML=`<div class=bigaddr>${esc(displayAddress(r))}</div>`;
+  }
+
+  q.addEventListener('input',()=>{renderAll()});
+  adv.addEventListener('input',()=>{renderAll()});
+  backBtn.addEventListener('click',()=>{
+    app.classList.remove('mobile-detail');
+    detailPane.removeAttribute('style');
+  });
+
+  function renderAll(){
+    filtered=records;
+    renderList();
+    if(filtered.length){renderDetail(filtered[0])}
+  }
+
+  renderAll();
+})();
 </script>
 </body>
 </html>
