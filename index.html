@@ -46,16 +46,22 @@
 
   .parts .group{margin-top:10px}
   .parts .group h4{margin:0 0 6px 0;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#b2c8ff}
-  .parts .list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+  .parts .list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;width:100%;max-width:100%}
   .parts .item{background:#0f1629;border:1px solid var(--border);border-radius:8px;padding:8px}
   .parts .item .label{color:var(--muted);font-size:12px}
   .parts .item .value{margin-top:4px}
+
+
+  /* Mobile fix: ensure parts items render inside fixed detail pane */
+  .parts .list{
+    overflow:visible;
+  }
 
   /* Mobile fullscreen behaviour via JS sets inline styles; this media rule only hides list when class is set */
   @media (max-width: 900px){
     .list{width:100%;max-width:none}
     main{flex-direction:column}
-    .app.mobile-detail .list{display:none}
+    .app.mobile-detail > main > .list{display:none}
   }
 
   /* Back button shown only in mobile-detail mode */
