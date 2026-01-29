@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Old Work Orders</title>
+<title>Work Orders — Approach‑Style Viewer v4 (mobile fullscreen)</title>
 <style>
   :root{--bg:#0b0d12;--panel:#0f1423;--card:#121726;--muted:#9db0c9;--text:#e8f0ff;--accent:#4da3ff;--border:#22314d}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
@@ -74,10 +74,11 @@
 <body>
 <div class="app" id="app">
   <header id="hdr">
-    <h1>Old Work Orders</h1>
+    <h1>Work Orders — Approach‑Style Viewer</h1>
     <div class="searchbar">
       <input id="q" type="search" placeholder="Phrase search (exact words in order, e.g., 200 W). Fielded: HOUSE NO:200 STREET NAME:W" />
-         </div>
+      <input id="adv" type="text" placeholder="Optional: more fielded terms (e.g., ADDRESS:400 E)" />
+    </div>
     <div class="meta"><span id="meta">Loading…</span> <span id="msg" style="color:#ff9e9e"></span></div>
   </header>
 
